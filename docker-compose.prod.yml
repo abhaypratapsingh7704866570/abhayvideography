@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   backend:
     image: abhaypratapsingh7704866570/abhayvideography-backend:latest

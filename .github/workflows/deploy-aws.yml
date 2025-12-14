@@ -46,12 +46,9 @@ jobs:
             # Navigate to app directory
             cd ~/abhayvideography || mkdir -p ~/abhayvideography && cd ~/abhayvideography
             
-            # Create docker-compose.yml if it doesn't exist
-            if [ ! -f docker-compose.yml ]; then
-              echo "📝 Creating docker-compose.yml..."
-              cat > docker-compose.yml << 'EOF'
-            version: '3.8'
-            
+            # Create docker-compose.yml (always overwrite to ensure latest config)
+            echo "📝 Creating docker-compose.yml..."
+            cat > docker-compose.yml << 'EOF'
             services:
               backend:
                 image: abhaypratapsingh7704866570/abhayvideography-backend:latest
@@ -63,6 +60,12 @@ jobs:
                 restart: unless-stopped
                 expose:
                   - "3000"
+                healthcheck:
+                  test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+                  interval: 30s
+                  timeout: 10s
+                  retries: 3
+                  start_period: 40s
             
               frontend:
                 image: abhaypratapsingh7704866570/abhayvideography-frontend:latest
@@ -72,6 +75,12 @@ jobs:
                 restart: unless-stopped
                 expose:
                   - "80"
+                healthcheck:
+                  test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:80"]
+                  interval: 30s
+                  timeout: 10s
+                  retries: 3
+                  start_period: 40s
             
               nginx:
                 image: nginx:alpine
@@ -86,12 +95,17 @@ jobs:
                 networks:
                   - app-network
                 restart: unless-stopped
+                healthcheck:
+                  test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:80"]
+                  interval: 30s
+                  timeout: 10s
+                  retries: 3
+                  start_period: 40s
             
             networks:
               app-network:
                 driver: bridge
             EOF
-            fi
             
             # Create nginx.conf if it doesn't exist
             if [ ! -f nginx.conf ]; then
@@ -170,8 +184,17 @@ jobs:
             
             # Pull latest images
             echo "🐳 Pulling latest Docker images..."
-            docker pull abhaypratapsingh7704866570/abhayvideography-backend:latest
-            docker pull abhaypratapsingh7704866570/abhayvideography-frontend:latest
+            if ! docker pull abhaypratapsingh7704866570/abhayvideography-backend:latest; then
+              echo "❌ Failed to pull backend image. Please ensure it exists in Docker Hub."
+              exit 1
+            fi
+            
+            if ! docker pull abhaypratapsingh7704866570/abhayvideography-frontend:latest; then
+              echo "❌ Failed to pull frontend image. Please ensure it exists in Docker Hub."
+              exit 1
+            fi
+            
+            echo "✅ Images pulled successfully"
             
             # Stop existing containers
             echo "🛑 Stopping existing containers..."
@@ -185,9 +208,32 @@ jobs:
             echo "🚀 Starting new containers..."
             docker-compose up -d
             
+            # Wait a moment for containers to start
+            sleep 5
+            
+            # Check for failed containers and show logs
+            echo "🔍 Checking container status..."
+            FAILED=0
+            for container in abhayvideography-backend abhayvideography-frontend abhayvideography-nginx; do
+              if [ "$(docker inspect -f '{{.State.Status}}' $container 2>/dev/null)" != "running" ]; then
+                echo "❌ Container $container is not running!"
+                echo "📋 Logs for $container:"
+                docker logs $container 2>&1 | tail -50
+                FAILED=1
+              else
+                echo "✅ Container $container is running"
+              fi
+            done
+            
             # Check status
+            echo ""
             echo "📊 Container status:"
             docker-compose ps
+            
+            if [ $FAILED -eq 1 ]; then
+              echo "❌ Some containers failed to start. Check logs above."
+              exit 1
+            fi
             
             echo "✅ Deployment completed successfully!"
 
