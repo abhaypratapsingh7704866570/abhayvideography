@@ -128,8 +128,8 @@ function getHomePageHTML() {
           ${createQuickContactCard(
             '📧',
             'Email Us',
-            'abhay.videography@gmail.com',
-            'mailto:abhay.videography@gmail.com',
+            'Contact@abhayvideography.studio',
+            'mailto:contact@abhayvideography.studio',
             'gradient-blue'
           )}
           ${createQuickContactCard(
@@ -296,12 +296,12 @@ function getContactPageHTML() {
           </div>
         </a>
 
-        <a href="mailto:abhay.videography@gmail.com" class="contact-card" data-delay="0.1s">
+        <a href="mailto:contact@abhayvideography.studio" class="contact-card" data-delay="0.1s">
           <div class="contact-card-bg gradient-blue"></div>
           <div class="contact-card-content">
             <div class="contact-icon">📧</div>
             <h3 class="contact-title">Email Me</h3>
-            <p class="contact-value blue">abhay.videography@gmail.com</p>
+            <p class="contact-value blue">contact@abhayvideography.studio</p>
             <p class="contact-label">Quick response</p>
           </div>
         </a>
