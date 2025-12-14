@@ -1,0 +1,84 @@
+name: Deploy to AWS EC2
+
+on:
+  workflow_run:
+    workflows: ["Build and Push Docker Images"]
+    types:
+      - completed
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy to EC2
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          script: |
+            # Navigate to app directory
+            cd ~/abhayvideography || mkdir -p ~/abhayvideography && cd ~/abhayvideography
+            
+            # Pull latest images
+            echo "🐳 Pulling latest Docker images..."
+            docker pull abhaypratapsingh7704866570/abhayvideography-backend:latest
+            docker pull abhaypratapsingh7704866570/abhayvideography-frontend:latest
+            
+            # Stop existing containers
+            echo "🛑 Stopping existing containers..."
+            docker-compose down || true
+            
+            # Remove old images
+            echo "🧹 Cleaning up old images..."
+            docker image prune -f
+            
+            # Start new containers
+            echo "🚀 Starting new containers..."
+            docker-compose up -d
+            
+            # Check status
+            echo "📊 Container status:"
+            docker-compose ps
+            
+            echo "✅ Deployment completed successfully!"
+
+      - name: Verify Deployment
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          script: |
+            # Wait for services to be ready
+            sleep 10
+            
+            # Check if containers are running
+            if [ $(docker ps -q | wc -l) -gt 0 ]; then
+              echo "✅ All containers are running"
+              docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+            else
+              echo "❌ No containers are running"
+              exit 1
+            fi
+
+      - name: Notify Success
+        if: success()
+        run: |
+          echo "🎉 Deployment to AWS EC2 completed successfully!"
+          echo "🌐 Application is live at: http://${{ secrets.EC2_HOST }}"
+
+      - name: Notify Failure
+        if: failure()
+        run: |
+          echo "❌ Deployment failed. Please check the logs above."

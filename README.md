@@ -1,6 +1,10 @@
-# Full Stack App - Frontend + Backend
+# Abhay Videography - Full Stack Application
 
-A simple full-stack application built with Vite + Tailwind CSS (frontend) and Node.js/Express (backend).
+[![CI](https://github.com/YOUR_USERNAME/abhayvideography/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_USERNAME/abhayvideography/actions/workflows/ci.yml)
+[![Docker Build](https://github.com/YOUR_USERNAME/abhayvideography/actions/workflows/docker-build.yml/badge.svg)](https://github.com/YOUR_USERNAME/abhayvideography/actions/workflows/docker-build.yml)
+[![Deploy to AWS](https://github.com/YOUR_USERNAME/abhayvideography/actions/workflows/deploy-aws.yml/badge.svg)](https://github.com/YOUR_USERNAME/abhayvideography/actions/workflows/deploy-aws.yml)
+
+A modern full-stack web application with Vite + Tailwind CSS (frontend) and Node.js/Express (backend), featuring automated CI/CD deployment to AWS.
 
 ## 📁 Project Structure
 
@@ -95,6 +99,62 @@ fetch('http://localhost:3000/api/data')
 - **Backend:** Node.js, Express.js, CORS
 - **No external databases** - Uses in-memory data
 
+## 🐳 Docker Deployment
+
+### Available Docker Images
+- Backend: `abhaypratapsingh7704866570/abhayvideography-backend:latest`
+- Frontend: `abhaypratapsingh7704866570/abhayvideography-frontend:latest`
+
+### Run with Docker Compose
+
+```bash
+# Build and start all services
+docker-compose up --build
+
+# Run in detached mode
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop services
+docker-compose down
+```
+
+## 🌐 AWS Deployment
+
+Deploy to AWS EC2 with automated script:
+
+```bash
+chmod +x deploy-aws.sh
+./deploy-aws.sh
+```
+
+For detailed AWS deployment instructions, see [AWS_DEPLOYMENT.md](AWS_DEPLOYMENT.md)
+
+## 🔄 CI/CD with GitHub Actions
+
+Automated workflows run on every push to `main`:
+1. ✅ Run tests and linting
+2. 🐳 Build and push Docker images
+3. 🚀 Deploy to AWS EC2
+
+**Setup Instructions:** See [GITHUB_ACTIONS_SETUP.md](GITHUB_ACTIONS_SETUP.md)
+
+### Required GitHub Secrets:
+- `DOCKER_USERNAME` - Docker Hub username
+- `DOCKER_PASSWORD` - Docker Hub password/token
+- `EC2_HOST` - AWS EC2 public IP
+- `EC2_USERNAME` - SSH username (ubuntu)
+- `EC2_SSH_KEY` - Private key (.pem) content
+
+## 🏗️ Architecture
+
+```
+Internet → Nginx Reverse Proxy → Backend API (/api/*)
+                               → Frontend (/)
+```
+
 ## ✅ Testing Checklist
 
 1. Start both servers
@@ -109,13 +169,25 @@ fetch('http://localhost:3000/api/data')
    - Check all fields are present
 5. Verify no errors in browser console or terminal
 
-## 📝 Next Steps
+## 📚 Documentation
 
-You can now:
-- Modify the frontend UI and styles in `frontend/src/`
-- Add more API endpoints in `backend/server.js`
-- Fetch different data from the Backend tab
-- Add form submissions or other interactive features
+- [AWS Deployment Guide](AWS_DEPLOYMENT.md)
+- [GitHub Actions CI/CD Setup](GITHUB_ACTIONS_SETUP.md)
+
+## 🛠️ Tech Stack
+
+**Backend:** Node.js, Express.js, CORS  
+**Frontend:** Vite, Tailwind CSS 4, Vanilla JS  
+**DevOps:** Docker, Docker Compose, GitHub Actions, AWS EC2, Nginx
+
+## 👤 Author
+
+Abhay Pratap Singh  
+Docker Hub: [@abhaypratapsingh7704866570](https://hub.docker.com/u/abhaypratapsingh7704866570)
+
+---
+
+**Made with ❤️ by Abhay Pratap Singh**
 
 Enjoy building! 🎉
 # abhayvideography
