@@ -910,12 +910,13 @@ body {
   width: 4rem;
   height: 4rem;
   border-radius: 1rem;
-  background: linear-gradient(to bottom right, currentColor, currentColor);
+  background: rgba(0, 0, 0, 0.3);
   display: flex;
   align-items: center;
-  justify-center: center;
-  font-size: 1.875rem;
-  transition: transform 0.3s;
+  justify-content: center;
+  font-size: 2.5rem;
+  transition: transform 0.3s, box-shadow 0.3s;
+  backdrop-filter: blur(10px);
 }
 
 .feature-card-content:hover .feature-icon {
@@ -1014,9 +1015,9 @@ body {
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
+  gap: 00.2rem;
   animation: slide-in 0.6s ease-out forwards;
-  animation-delay: 0.7s;
+  animation-delay: .8s;
 }
 
 @media (min-width: 768px) {
@@ -1074,18 +1075,30 @@ body {
 
 .stat-gradient-rose {
   background: linear-gradient(to right, #fb7185, #f9a8d4);
+  border-radius: 0.30rem;
+  padding: 0.1rem 1rem;
+  display: inline-block;
 }
 
 .stat-gradient-amber {
   background: linear-gradient(to right, #fbbf24, #fde047);
+  border-radius: 0.35rem;
+  padding: 0.1rem 1rem;
+  display: inline-block;
 }
 
 .stat-gradient-purple {
   background: linear-gradient(to right, #c084fc, #60a5fa);
+  border-radius: 0.35rem;
+  padding: 0.1rem 1rem;
+  display: inline-block;
 }
 
 .stat-gradient-green {
   background: linear-gradient(to right, #34d399, #6ee7b7);
+  border-radius: 0.35rem;
+  padding: 0.1rem 1rem;
+  display: inline-block;
 }
 
 /* ============================================
@@ -1261,6 +1274,7 @@ body {
 
 .services-banner {
   position: relative;
+  margin: 2rem 0 0 0;
   padding: 1.5rem;
   border-radius: 1rem;
   background: rgba(255, 255, 255, 0.05);
