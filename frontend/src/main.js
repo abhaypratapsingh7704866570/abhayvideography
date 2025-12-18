@@ -88,6 +88,9 @@ function getHomePageHTML() {
           <span class="availability-text">Available for Bookings</span>
         </div>
         
+
+        
+        
         <h1 class="main-title">
           <span class="title-gradient">Capturing Forever</span>
         </h1>
